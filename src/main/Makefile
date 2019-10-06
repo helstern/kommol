@@ -35,4 +35,7 @@ build: ARGS=-v
 build: ${mkfile_dir}/internal ${mkfile_dir}/cmd
 	${QUIET} cd ${mkfile_dir}/cmd/kommol && ${GO} build -o ${out_dir}/kommol ${ARGS}
 
-.PHONY: ${TEST_TARGETS} check test tests
+install:
+	${QUIET} ${GO} mod vendor
+
+.PHONY: ${TEST_TARGETS} check test tests install
