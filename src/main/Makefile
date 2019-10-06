@@ -1,3 +1,9 @@
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+mkfile_dir := $(shell dirname $(mkfile_path))
+
+PROJECT_DIR := $(shell cd ${mkfile_dir}/../../ && pwd)
+out_dir := ${PROJECT_DIR}/target
+
 GO      = go
 
 MODULE   = $(shell env GO111MODULE=on ${GO} list -m)
@@ -21,7 +27,12 @@ test-race:    ARGS=-race         ## Run tests with race detector
 ${TEST_TARGET_VARIANTS}: NAME=$(MAKECMDGOALS:test-%=%)
 ${TEST_TARGET_VARIANTS}: test
 
-check test tests: $(info $M running ${NAME:%=% }tests…) ## Run tests
+check test tests:
+	$(info $M running ${NAME:%=% }tests…) ## Run tests
 	${QUIET} ${GO} test -timeout ${TEST_TIMEOUT}s ${ARGS} ${TESTPKGS}
+
+build: ARGS=-v
+build: ${mkfile_dir}/internal ${mkfile_dir}/cmd
+	${QUIET} cd ${mkfile_dir}/cmd/kommol && ${GO} build -o ${out_dir}/kommol ${ARGS}
 
 .PHONY: ${TEST_TARGETS} check test tests

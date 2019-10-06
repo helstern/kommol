@@ -9,11 +9,11 @@ import (
 	"net/http"
 )
 
-type ObjectWriter struct {
+type ObjectWriterAdapter struct {
 	object *storage.ObjectHandle
 }
 
-func (this *ObjectWriter) ModifyHeaders(ctx context.Context, headerMap http.Header) error {
+func (this *ObjectWriterAdapter) ModifyHeaders(ctx context.Context, headerMap http.Header) error {
 	attr, err := this.object.Attrs(ctx)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func (this *ObjectWriter) ModifyHeaders(ctx context.Context, headerMap http.Head
 	return nil
 }
 
-func (this *ObjectWriter) WriteContent(ctx context.Context, out io.Writer) (int64, error) {
+func (this *ObjectWriterAdapter) WriteContent(ctx context.Context, out io.Writer) (int64, error) {
 	reader, err := this.object.NewReader(ctx)
 	if err != nil {
 		return 0, err
@@ -59,7 +59,7 @@ func (this *ObjectWriter) WriteContent(ctx context.Context, out io.Writer) (int6
 }
 
 func NewObjectWriter(object *storage.ObjectHandle) object.Writer {
-	return &ObjectWriter{
+	return &ObjectWriterAdapter{
 		object: object,
 	}
 }

@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"github.com/helstern/kommol/internal/bootstrap/gcp/core"
-	"github.com/helstern/kommol/internal/core/gcp"
 	"github.com/helstern/kommol/internal/infrastructure/di/builder"
+	"github.com/helstern/kommol/internal/infrastructure/gcp"
 	objectPkg "github.com/helstern/kommol/internal/presentation/api/gcp/object"
 	"github.com/helstern/kommol/internal/presentation/api/gcp/object/operations"
 	"github.com/sarulabs/di/v2"
@@ -23,7 +23,7 @@ func (o *object) Module(ctx context.Context, builder *di.Builder) error {
 		Name: o.keyGetHandler,
 		Build: func(ctn di.Container) (interface{}, error) {
 			client := core.StorageClient().Get(ctn)
-			objectRetriever := gcp.NewObjectRetrieve(client)
+			objectRetriever := gcp.NewObjectRetrieverDefault(client)
 
 			return operations.NewGetHandler(objectRetriever), nil
 		},

@@ -2,9 +2,9 @@ package core
 
 import (
 	"context"
-	"github.com/helstern/kommol/internal/core/gcp"
 	"github.com/helstern/kommol/internal/core/object/app"
 	"github.com/helstern/kommol/internal/infrastructure/di/builder"
+	"github.com/helstern/kommol/internal/infrastructure/gcp"
 	"github.com/sarulabs/di/v2"
 )
 
@@ -21,7 +21,7 @@ func (o *objectProvider) Module(ctx context.Context, builder *di.Builder) error 
 		Name: o.key,
 		Build: func(ctn di.Container) (interface{}, error) {
 			client := StorageClient().Get(ctn)
-			return gcp.NewObjectRetrieve(client), nil
+			return gcp.NewObjectRetrieverDefault(client), nil
 		},
 	})
 }
@@ -33,7 +33,7 @@ var (
 func ObjectRetriever() *objectProvider {
 	if objectProviderBootstrap == nil {
 		objectProviderBootstrap = &objectProvider{
-			key: builder.TypeName((*gcp.ObjectRetriever)(nil)),
+			key: builder.TypeName((*gcp.ObjectRetrieverAdapter)(nil)),
 		}
 	}
 

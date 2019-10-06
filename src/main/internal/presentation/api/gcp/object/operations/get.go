@@ -2,6 +2,7 @@ package operations
 
 import (
 	"context"
+	"github.com/apex/log"
 	"github.com/helstern/kommol/internal/core/object/app"
 	"github.com/helstern/kommol/internal/presentation/api/gcp/object"
 	"net/http"
@@ -9,7 +10,13 @@ import (
 
 func objectHandler(w http.ResponseWriter, path string, s app.ObjectRetriever) {
 	o, err := s.Retrieve(path)
+
+	logCtx := log.WithFields(log.Fields{
+		"path": path,
+	})
+
 	if err != nil {
+		logCtx.Info(err.Error())
 		http.Error(w, "failed to retrieve", http.StatusInternalServerError)
 		return
 	}
@@ -18,11 +25,13 @@ func objectHandler(w http.ResponseWriter, path string, s app.ObjectRetriever) {
 
 	err = o.ModifyHeaders(ctx, w.Header())
 	if err != nil {
+		logCtx.Info(err.Error())
 		http.Error(w, "failed to retrieve", http.StatusInternalServerError)
 		return
 	}
 	_, err = o.WriteContent(ctx, w)
 	if err != nil {
+		logCtx.Info(err.Error())
 		http.Error(w, "failed to retrieve", http.StatusInternalServerError)
 	}
 }
