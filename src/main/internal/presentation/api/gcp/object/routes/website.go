@@ -11,7 +11,7 @@ type website struct{}
 
 func (ww website) Provide(r *mux.Router, h object.GetHandler) {
 	r.
-		HandleFunc("/+", func(w http.ResponseWriter, req *http.Request) {
+		HandleFunc("/{_:.+}", func(w http.ResponseWriter, req *http.Request) {
 			ww.Handle(w, req, h)
 		}).
 		Headers("X-KOMMOL-STRATEGY", "GCP_WEBSITE").
@@ -23,7 +23,6 @@ func (_ website) ExtractPath(req *http.Request) string {
 
 	b.WriteString("gs://")
 	b.WriteString(req.URL.Host)
-	b.WriteString("/")
 	b.WriteString(req.URL.Path)
 
 	return b.String()
