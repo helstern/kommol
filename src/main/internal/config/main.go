@@ -2,12 +2,11 @@ package config
 
 import (
 	"flag"
-	gcp "github.com/helstern/kommol/internal/core/gcp/config"
 )
 
 type Config struct {
 	BindAddress string
-	GCP         gcp.Config
+	GCP         GcpConfig
 }
 
 var (
@@ -28,6 +27,6 @@ func NewCliConfig() Config {
 
 	return Config{
 		BindAddress: *bind,
-		GCP:         gcp.NewCliConfig(*gcpCredentials),
+		GCP:         NewGcpCliConfig(*gcpCredentials),
 	}
 }
