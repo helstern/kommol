@@ -9,7 +9,7 @@ import (
 )
 
 type ObjectRetrieverAdapter struct {
-	createObjectWriter ObjectWriterFactory
+	GcpObjectRetriever
 }
 
 func (this *ObjectRetrieverAdapter) Retrieve(opath string) (object.Writer, error) {
@@ -19,15 +19,23 @@ func (this *ObjectRetrieverAdapter) Retrieve(opath string) (object.Writer, error
 		return nil, err
 	}
 
-	return this.createObjectWriter(oUrl.Host, strings.Trim(oUrl.Path, "/")), nil
+	bucket := oUrl.Host
+	key := strings.Trim(oUrl.Path, "/")
+
+	gcpObject := &Object{
+		Bucket: bucket,
+		Key:    key,
+	}
+
+	return this.RetrieveObject(gcpObject)
 }
 
-func NewObjectRetriever(createObjectWriter ObjectWriterFactory) app.ObjectRetriever {
-	return &ObjectRetrieverAdapter{createObjectWriter: createObjectWriter}
+func NewObjectRetrieverAdapter(retriever GcpObjectRetriever) *ObjectRetrieverAdapter {
+	return &ObjectRetrieverAdapter{
+		GcpObjectRetriever: retriever,
+	}
 }
 
-func NewObjectRetrieverDefault(client *storage.Client) app.ObjectRetriever {
-	return NewObjectRetriever(
-		NewObjectWriterFactory(client),
-	)
+func NewObjectRetriever(client *storage.Client) app.ObjectRetriever {
+	return NewObjectRetrieverAdapter(&GoogleClientObjectRetriever{Client: client})
 }

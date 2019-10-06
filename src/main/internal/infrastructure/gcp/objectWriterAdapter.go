@@ -9,44 +9,50 @@ import (
 	"net/http"
 )
 
+func ModifyHeaders(attrs *storage.ObjectAttrs, headerMap http.Header) {
+	if attrs.ContentType != "" {
+		headerMap.Set(headers.ContentType, attrs.ContentType)
+	}
+
+	if attrs.ContentLanguage != "" {
+		headerMap.Set(headers.ContentLanguage, attrs.ContentLanguage)
+	}
+
+	if attrs.ContentEncoding != "" {
+		headerMap.Set(headers.ContentEncoding, attrs.ContentEncoding)
+	}
+
+	if attrs.ContentDisposition != "" {
+		headerMap.Set(headers.ContentDisposition, attrs.ContentDisposition)
+	}
+
+	if attrs.Size != 0 {
+		headerMap.Set(headers.ContentLength, headers.FormatInt(attrs.Size))
+	}
+
+	if attrs.CacheControl != "" {
+		headerMap.Set(headers.CacheControl, attrs.CacheControl)
+	}
+}
+
 type ObjectWriterAdapter struct {
-	object *storage.ObjectHandle
+	object.Writer
+	client *storage.Client
+	object *Object
 }
 
 func (this *ObjectWriterAdapter) ModifyHeaders(ctx context.Context, headerMap http.Header) error {
-	attr, err := this.object.Attrs(ctx)
+	attr, err := this.object.Attrs(ctx, this.client)
 	if err != nil {
 		return err
 	}
 
-	if attr.ContentType != "" {
-		headerMap.Set(headers.ContentType, attr.ContentType)
-	}
-
-	if attr.ContentLanguage != "" {
-		headerMap.Set(headers.ContentLanguage, attr.ContentLanguage)
-	}
-
-	if attr.ContentEncoding != "" {
-		headerMap.Set(headers.ContentEncoding, attr.ContentEncoding)
-	}
-
-	if attr.ContentDisposition != "" {
-		headerMap.Set(headers.ContentDisposition, attr.ContentDisposition)
-	}
-
-	if attr.Size != 0 {
-		headerMap.Set(headers.ContentLength, headers.FormatInt(attr.Size))
-	}
-
-	if attr.CacheControl != "" {
-		headerMap.Set(headers.CacheControl, attr.CacheControl)
-	}
+	ModifyHeaders(attr, headerMap)
 	return nil
 }
 
 func (this *ObjectWriterAdapter) WriteContent(ctx context.Context, out io.Writer) (int64, error) {
-	reader, err := this.object.NewReader(ctx)
+	reader, err := this.object.NewReader(ctx, this.client)
 	if err != nil {
 		return 0, err
 	}
@@ -58,8 +64,9 @@ func (this *ObjectWriterAdapter) WriteContent(ctx context.Context, out io.Writer
 	return size, err
 }
 
-func NewObjectWriter(object *storage.ObjectHandle) object.Writer {
+func NewObjectWriterAdapter(client *storage.Client, object *Object) *ObjectWriterAdapter {
 	return &ObjectWriterAdapter{
+		client: client,
 		object: object,
 	}
 }

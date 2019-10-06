@@ -21,7 +21,7 @@ func (o *objectProvider) Module(ctx context.Context, builder *di.Builder) error 
 		Name: o.key,
 		Build: func(ctn di.Container) (interface{}, error) {
 			client := StorageClient().Get(ctn)
-			return gcp.NewObjectRetrieverDefault(client), nil
+			return gcp.NewObjectRetriever(client), nil
 		},
 	})
 }

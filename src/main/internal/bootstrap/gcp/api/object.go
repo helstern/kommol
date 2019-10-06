@@ -23,7 +23,7 @@ func (o *object) Module(ctx context.Context, builder *di.Builder) error {
 		Name: o.keyGetHandler,
 		Build: func(ctn di.Container) (interface{}, error) {
 			client := core.StorageClient().Get(ctn)
-			objectRetriever := gcp.NewObjectRetrieverDefault(client)
+			objectRetriever := gcp.NewObjectRetriever(client)
 
 			return operations.NewGetHandler(objectRetriever), nil
 		},
