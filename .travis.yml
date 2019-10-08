@@ -32,3 +32,12 @@ script:
 branches:
   only:
     - master
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: target/kommol
+  skip_cleanup: true
+  draft: true
+  on:
+    tags: true
