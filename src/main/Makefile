@@ -32,10 +32,13 @@ check test tests:
 	${QUIET} ${GO} test -timeout ${TEST_TIMEOUT}s ${ARGS} ${TESTPKGS}
 
 build: ARGS=-v
+build: GOOS ?= linux
+build: GOARCH ?= amd64
 build: ${mkfile_dir}/internal ${mkfile_dir}/cmd
-	${QUIET} cd ${mkfile_dir}/cmd/kommol && ${GO} build -o ${out_dir}/kommol ${ARGS}
+	${QUIET} cd ${mkfile_dir}/cmd/kommol && GOOS=${GOOS} GOARCH=${GOARCH}  ${GO} build -o ${out_dir}/kommol/kommol ${ARGS}
+	${QUIET} cd ${out_dir} && tar -cz -f ${out_dir}/kommol-${GOOS}-${GOARCH}.tar.gz -C ${out_dir}/kommol .
 
-install:
+deps:
 	${QUIET} ${GO} mod vendor
 
-.PHONY: ${TEST_TARGETS} check test tests install
+.PHONY: ${TEST_TARGETS} check test tests deps
