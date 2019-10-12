@@ -6,7 +6,7 @@ language: go
 # Force-enable Go modules. Also force go to use the code in vendor/
 # These will both be unnecessary when Go 1.13 lands.
 env:
-  - GO111MODULE=on GOOS=linux GOARCH=amd64
+  - GO111MODULE=on GOOS_=linux GOARCH_=amd64
 
 go:
   - "1.13"
@@ -28,7 +28,7 @@ before_script:
 # TODO lint
 script:
   - if test -z "${TRAVIS_TAG}" && test -n "${TRAVIS_PULL_REQUEST_SHA}"; then (cd src/main && make test); fi # only run tests on pull requests
-  - if test -n "${TRAVIS_TAG}" && test -z "${TRAVIS_PULL_REQUEST_SHA}"; then (cd src/main && VERSION=${TRAVIS_TAG} GOOS=${GOOS} GOARCH=${GOARCH} make build); fi # only run tests on pull requests
+  - if test -n "${TRAVIS_TAG}" && test -z "${TRAVIS_PULL_REQUEST_SHA}"; then (cd src/main && VERSION=${TRAVIS_TAG} GOOS=${GOOS_} GOARCH=${GOARCH_} make build); fi # only run tests on pull requests
 
 branches:
   only:
@@ -39,7 +39,7 @@ branches:
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
-  file: target/kommol-${GOOS}-${GOARCH}.tar.gz
+  file: target/kommol-${TRAVIS_TAG}-linux-amd64.tar.gz
   skip_cleanup: true
   draft: true
   on:
