@@ -33,6 +33,8 @@ script:
 branches:
   only:
     - master
+    - /^deploy-.*$/
+    - /^v\d+\.\d+\.\d+.*$/
 
 deploy:
   provider: releases
