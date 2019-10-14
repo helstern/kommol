@@ -23,12 +23,12 @@ notifications:
   email: false
 
 before_script:
-  - (cd src/main && make deps)
+  - make deps
 
 # TODO lint
 script:
-  - if test -z "${TRAVIS_TAG}" && test -n "${TRAVIS_PULL_REQUEST_SHA}"; then (cd src/main && make test); fi # only run tests on pull requests
-  - if test -n "${TRAVIS_TAG}" && test -z "${TRAVIS_PULL_REQUEST_SHA}"; then (cd src/main && VERSION=${TRAVIS_TAG} GOOS=${GOOS_} GOARCH=${GOARCH_} make build); fi # only run tests on pull requests
+  - if test -z "${TRAVIS_TAG}" && test -n "${TRAVIS_PULL_REQUEST_SHA}"; then make test; fi # only run tests on pull requests
+  - if test -n "${TRAVIS_TAG}" && test -z "${TRAVIS_PULL_REQUEST_SHA}"; then VERSION=${TRAVIS_TAG} GOOS=${GOOS_} GOARCH=${GOARCH_} make build; fi # only run tests on pull requests
 
 branches:
   only:

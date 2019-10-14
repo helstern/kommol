@@ -16,3 +16,7 @@ vendor
 
 # Output directory
 target
+
+# env
+.env
+*.env

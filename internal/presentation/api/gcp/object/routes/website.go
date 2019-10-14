@@ -21,9 +21,16 @@ func (ww website) Provide(r *mux.Router, h object.GetHandler) {
 func (_ website) ExtractPath(req *http.Request) string {
 	var b bytes.Buffer
 
+	bucket := req.URL.Host
+	if bucket == "" {
+		//bucket = strings.Split(req.Host, ":")[0]
+		bucket = req.Host
+	}
+	object := req.URL.Path
+
 	b.WriteString("gs://")
-	b.WriteString(req.URL.Host)
-	b.WriteString(req.URL.Path)
+	b.WriteString(bucket)
+	b.WriteString(object)
 
 	return b.String()
 }
