@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+### Changed
+ - fix e2e tests
+ - ignore the port from the hostname when using the static website bucket strategy
+ - use read-only scope with GCP authorization   
+    
 ## [v0.1.4] - 2019-10-14
 ### Added
-- end-to-end tests for haproxy using BATS
+ - end-to-end tests for haproxy using BATS
 ### Changed
  - adopt a more conventional golang project structure
  - fix handle relative HTTP requests

@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/helstern/kommol/internal/presentation/api/gcp/object"
 	"net/http"
+	"strings"
 )
 
 type website struct{}
@@ -23,9 +24,10 @@ func (_ website) ExtractPath(req *http.Request) string {
 
 	bucket := req.URL.Host
 	if bucket == "" {
-		//bucket = strings.Split(req.Host, ":")[0]
 		bucket = req.Host
 	}
+	bucket = strings.Split(bucket, ":")[0]
+
 	object := req.URL.Path
 
 	b.WriteString("gs://")

@@ -25,7 +25,10 @@ function teardown() {
 @test "download from a public bucket" {
     local local_file=${BATS_TMPDIR}/"$(basename ${E2E_WEBSITE_FILE})"
 
-    STATUS=$(curl -s -w '%{http_code}' --resolve ${E2E_WEBSITE_BUCKET}:80:127.0.0.1 -o ${local_file} http://${E2E_WEBSITE_BUCKET}${E2E_WEBSITE_FILE})
+    STATUS=$(curl -s -w '%{http_code}' \
+        --resolve ${E2E_WEBSITE_BUCKET}:8180:127.0.0.1 --output ${local_file} \
+        -H 'X-KOMMOL-STRATEGY: GCP_WEBSITE' http://${E2E_WEBSITE_BUCKET}:8180${E2E_WEBSITE_FILE}
+    )
     [ "${STATUS}" = "200" ]
     rm ${local_file}
 }

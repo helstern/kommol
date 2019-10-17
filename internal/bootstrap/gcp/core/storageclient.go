@@ -25,10 +25,10 @@ func (o *storageClient) Module(ctx context.Context, builder *di.Builder) error {
 			credentials := appConfig.GCP.GetCredentialFilePath()
 
 			if credentials != "" {
-				return storage.NewClient(ctx, option.WithCredentialsFile(credentials))
+				return storage.NewClient(ctx, option.WithCredentialsFile(credentials), option.WithScopes("https://www.googleapis.com/auth/devstorage.read_only"))
 			}
 
-			return storage.NewClient(ctx)
+			return storage.NewClient(ctx, option.WithScopes("https://www.googleapis.com/auth/devstorage.read_only"))
 		},
 	})
 }

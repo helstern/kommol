@@ -8,31 +8,37 @@ import (
 	"testing"
 )
 
-func TestWebsiteSuccess(t *testing.T) {
-
-	absoluteUrlRequest := httptest.NewRequest(
-		"GET",
-		"http://www.mozilla.com/bucket/object",
-		nil,
-	)
-	absoluteUrlRequest.Header.Add("X-KOMMOL-STRATEGY", "GCP_WEBSITE")
-
-	relativeUrlRequest := httptest.NewRequest(
-		"GET",
-		"/bucket/object",
-		nil,
-	)
-	relativeUrlRequest.Header.Add("Host", "www.mozilla.com")
-	//simulate the result
-	relativeUrlRequest.URL.Host = ""
-	relativeUrlRequest.Host = "www.mozilla.com"
-
-	reqs := []*http.Request{
-		absoluteUrlRequest,
-		relativeUrlRequest,
+func buildRequest(host string, path string, isRelative bool) *http.Request {
+	var target string
+	if isRelative {
+		target = path
+	} else {
+		target = "http://" + host + path
 	}
-	for _, req := range reqs {
-		req.Header.Add("X-KOMMOL-STRATEGY", "GCP_WEBSITE")
+
+	request := httptest.NewRequest(
+		"GET",
+		target,
+		nil,
+	)
+	request.Header.Add("X-KOMMOL-STRATEGY", "GCP_WEBSITE")
+
+	if isRelative {
+		request.Header.Add("Host", host)
+		//simulate the result
+		request.URL.Host = ""
+		request.Host = host
+	}
+
+	return request
+}
+
+func TestWebsiteSuccess(t *testing.T) {
+	reqs := []*http.Request{
+		buildRequest("www.mozilla.com", "/bucket/object", false),
+		buildRequest("www.mozilla.com:80", "/bucket/object", false),
+		buildRequest("www.mozilla.com:80", "/bucket/object", true),
+		buildRequest("www.mozilla.com", "/bucket/object", true),
 	}
 
 	expectedPath := "gs://www.mozilla.com/bucket/object"
@@ -48,5 +54,4 @@ func TestWebsiteSuccess(t *testing.T) {
 			t.Errorf("the website route does not handle expected urls")
 		}
 	}
-
 }
