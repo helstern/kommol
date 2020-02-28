@@ -9,11 +9,12 @@ import (
 )
 
 func objectHandler(w http.ResponseWriter, path string, s app.ObjectRetriever) {
-	o, err := s.Retrieve(path)
-
 	logCtx := log.WithFields(log.Fields{
 		"path": path,
 	})
+	logCtx.Info("retrieving path")
+
+	o, err := s.Retrieve(path)
 
 	if err != nil {
 		logCtx.Info(err.Error())

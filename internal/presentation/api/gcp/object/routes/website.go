@@ -17,6 +17,12 @@ func (ww website) Provide(r *mux.Router, h object.GetHandler) {
 		}).
 		Headers("X-KOMMOL-STRATEGY", "GCP_WEBSITE").
 		Methods("GET")
+	r.
+		HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+			ww.Handle(w, req, h)
+		}).
+		Headers("X-KOMMOL-STRATEGY", "GCP_WEBSITE").
+		Methods("GET")
 }
 
 func (_ website) ExtractPath(req *http.Request) string {
@@ -32,8 +38,12 @@ func (_ website) ExtractPath(req *http.Request) string {
 
 	b.WriteString("gs://")
 	b.WriteString(bucket)
-	b.WriteString(object)
 
+	if object == "/" {
+		return b.String()
+	}
+
+	b.WriteString(object)
 	return b.String()
 }
 

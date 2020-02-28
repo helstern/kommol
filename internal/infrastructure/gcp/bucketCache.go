@@ -31,3 +31,7 @@ func (this *BucketCache) Put(key string, item *storage.BucketWebsite) *storage.B
 	}
 	return nil
 }
+
+func NewBucketCache() BucketCache {
+	return BucketCache{items: make(map[string]BucketCacheItem)}
+}

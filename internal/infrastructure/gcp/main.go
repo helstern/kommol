@@ -5,6 +5,7 @@ import (
 	"context"
 	"github.com/helstern/kommol/internal/core/object"
 	"io"
+	"time"
 )
 
 type Object struct {
@@ -34,7 +35,35 @@ type GoogleClientObjectRetriever struct {
 	buckets BucketCache
 }
 
+func (this *GoogleClientObjectRetriever) resolveIndexObject(bucket string) *Object {
+	var websiteCfg *storage.BucketWebsite
+
+	websiteCfg, _ = this.buckets.Get(bucket)
+	if websiteCfg == nil {
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		attrs, _ := this.Client.Bucket(bucket).Attrs(ctx)
+		if attrs.Website == nil {
+			websiteCfg = &storage.BucketWebsite{
+				MainPageSuffix: "/",
+				NotFoundPage:   "",
+			}
+		} else {
+			websiteCfg = attrs.Website
+		}
+		this.buckets.Put(bucket, websiteCfg)
+	}
+
+	return &Object{
+		Bucket: bucket,
+		Key:    websiteCfg.MainPageSuffix,
+	}
+}
+
 func (this *GoogleClientObjectRetriever) resolveObject(object *Object) *Object {
+	if object.Key == "" || object.Key == "/" {
+		return this.resolveIndexObject(object.Bucket)
+	}
+
 	return object
 }
 
