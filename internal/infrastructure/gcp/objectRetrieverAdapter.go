@@ -37,5 +37,8 @@ func NewObjectRetrieverAdapter(retriever GcpObjectRetriever) *ObjectRetrieverAda
 }
 
 func NewObjectRetriever(client *storage.Client) app.ObjectRetriever {
-	return NewObjectRetrieverAdapter(&GoogleClientObjectRetriever{Client: client})
+	return NewObjectRetrieverAdapter(&GoogleClientObjectRetriever{
+		Client:  client,
+		buckets: BucketCache{},
+	})
 }

@@ -30,9 +30,15 @@ type GcpObjectRetriever interface {
 
 type GoogleClientObjectRetriever struct {
 	GcpObjectRetriever
-	Client *storage.Client
+	Client  *storage.Client
+	buckets BucketCache
+}
+
+func (this *GoogleClientObjectRetriever) resolveObject(object *Object) *Object {
+	return object
 }
 
 func (this *GoogleClientObjectRetriever) RetrieveObject(object *Object) (object.Writer, error) {
-	return NewObjectWriterAdapter(this.Client, object), nil
+	resolvedObject := this.resolveObject(object)
+	return NewObjectWriterAdapter(this.Client, resolvedObject), nil
 }
