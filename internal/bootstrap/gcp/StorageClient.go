@@ -1,4 +1,4 @@
-package core
+package gcp
 
 import (
 	"cloud.google.com/go/storage"
@@ -9,15 +9,15 @@ import (
 	"google.golang.org/api/option"
 )
 
-type storageClient struct {
+type StorageClient struct {
 	key string
 }
 
-func (o *storageClient) Get(ctn di.Container) *storage.Client {
+func (o *StorageClient) Get(ctn di.Container) *storage.Client {
 	return ctn.Get(o.key).(*storage.Client)
 }
 
-func (o *storageClient) Module(ctx context.Context, builder *di.Builder) error {
+func (o *StorageClient) Module(ctx context.Context, builder *di.Builder) error {
 	return builder.Add(di.Def{
 		Name: o.key,
 		Build: func(ctn di.Container) (interface{}, error) {
@@ -34,15 +34,15 @@ func (o *storageClient) Module(ctx context.Context, builder *di.Builder) error {
 }
 
 var (
-	storageClientBootstrap *storageClient
+	bootstrapStorageClient *StorageClient
 )
 
-func StorageClient() *storageClient {
-	if storageClientBootstrap == nil {
-		storageClientBootstrap = &storageClient{
+func GetStorageClient() *StorageClient {
+	if bootstrapStorageClient == nil {
+		bootstrapStorageClient = &StorageClient{
 			key: builder.TypeName((*storage.Client)(nil)),
 		}
 	}
 
-	return storageClientBootstrap
+	return bootstrapStorageClient
 }

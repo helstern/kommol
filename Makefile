@@ -1,8 +1,9 @@
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 mkfile_dir := $(shell dirname $(mkfile_path))
 
-PROJECT_DIR := $(shell cd ${mkfile_dir} && pwd)
-out_dir := ${PROJECT_DIR}/target
+PROJECT_PATH := $(shell cd ${mkfile_dir} && pwd)
+PROJECT_DIR := $(shell basename ${PROJECT_PATH})
+out_dir := ${PROJECT_PATH}/target
 
 VERSION_TOOLS_IMAGE=helstern/version-tools
 VERSION_TOOLS_VERSION=v0.1.0
@@ -52,7 +53,7 @@ deps:
 # RELEASE
 
 VERSION_TOOLS_IMAGE=helstern/version-tools
-VERSION_TOOLS_VERSION=v0.1.0
+VERSION_TOOLS_VERSION=v0.4.1
 
 release-major: ARGS=-M
 release-minor: ARGS=-m
@@ -64,15 +65,15 @@ ${RELEASE_TARGETS}: release
 changelog:
 	${QUIET} docker run --user 1000  \
 		--volume ~/.gitconfig:/home/versioneer/.gitconfig \
-		--volume ${mkfile_dir_path}:/home/versioneer/${mkfile_dir} \
-		--workdir /home/versioneer/${mkfile_dir} \
+		--volume ${mkfile_dir}:/home/versioneer/${PROJECT_DIR} \
+		--workdir /home/versioneer/${PROJECT_DIR} \
 		-it ${VERSION_TOOLS_IMAGE}:${VERSION_TOOLS_VERSION} \
 		/bin/sh -c "kacl init"
 
 release:
 	${QUIET} docker run --user 1000  \
 		--volume ~/.gitconfig:/home/versioneer/.gitconfig \
-		--volume ${mkfile_dir_path}:/home/versioneer/${mkfile_dir} \
+		--volume ${mkfile_dir}:/home/versioneer/${mkfile_dir} \
 		--workdir /home/versioneer/${mkfile_dir} \
 		-it ${VERSION_TOOLS_IMAGE}:${VERSION_TOOLS_VERSION} \
 		/bin/sh -c "release-simple.sh ${ARGS}"

@@ -2,7 +2,7 @@ package config
 
 import (
 	"context"
-	"github.com/helstern/kommol/internal/config"
+	"github.com/helstern/kommol/internal/infrastructure/config"
 	"github.com/helstern/kommol/internal/infrastructure/di/builder"
 	"github.com/sarulabs/di/v2"
 )
