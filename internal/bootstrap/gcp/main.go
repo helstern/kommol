@@ -13,7 +13,7 @@ func Module(ctx context.Context, builder *di.Builder) error {
 		return err
 	}
 
-	err = GetObjectProvider().Module(ctx, builder)
+	err = GetStorageClient().Module(ctx, builder)
 	if err != nil {
 		return err
 	}

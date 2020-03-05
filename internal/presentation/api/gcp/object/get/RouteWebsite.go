@@ -6,6 +6,7 @@ import (
 	coreObject "github.com/helstern/kommol/internal/core/object"
 	"github.com/helstern/kommol/internal/infrastructure/gcp"
 	"net/http"
+	"strings"
 )
 
 type RouteWebsite struct {
@@ -39,11 +40,16 @@ func (this RouteWebsite) Provide(r *mux.Router, h Operation) {
 }
 
 func (this RouteWebsite) ExtractObject(req *http.Request) (coreObject.Object, error) {
-	var b bytes.Buffer
 
+	bucket := req.URL.Host
+	if bucket == "" {
+		bucket = req.Host
+	}
+	bucket = strings.Split(bucket, ":")[0]
+
+	var b bytes.Buffer
 	b.WriteString("gs://")
-	b.WriteString(req.URL.Host)
-	b.WriteString("/")
+	b.WriteString(bucket)
 	b.WriteString(req.URL.Path)
 
 	return gcp.ParseObjectUrlString(b.String())

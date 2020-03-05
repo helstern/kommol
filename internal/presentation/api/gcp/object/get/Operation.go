@@ -6,13 +6,14 @@ import (
 	"github.com/helstern/kommol/internal/core/object/app"
 	"io"
 	"net/http"
+	"strings"
 )
 
 type Operation func(w http.ResponseWriter, req *http.Request, obj object.Object)
 
 func NewOperation(s app.ObjectProxy) Operation {
 	operation := func(w http.ResponseWriter, req *http.Request, obj object.Object) {
-		path := ""
+		path := strings.Join(obj.Path, "/")
 
 		logCtx := log.WithFields(log.Fields{
 			"path": path,

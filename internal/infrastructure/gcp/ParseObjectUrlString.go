@@ -15,10 +15,11 @@ func ParseObjectUrlString(path string) (object.Object, error) {
 
 	segments := []string{oUrl.Host}
 
-	segments = append(segments, strings.Split(
-		strings.Trim(oUrl.Path, "/"),
-		"/",
-	)...)
+	normalPath := strings.Trim(oUrl.Path, "/")
+	if len(normalPath) > 0 {
+		segments = append(segments, strings.Split(normalPath, "/")...)
+	}
+
 	if strings.HasSuffix(oUrl.Path, "/") {
 		segments = append(segments, "/")
 	}

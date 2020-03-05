@@ -17,15 +17,15 @@ func main() {
 	ctx := context.Background()
 	server := getServer(ctx)
 
-	ctxx := apexLog.WithFields(apexLog.Fields{
-		"file": "something.png",
-		"type": "image/png",
-		"user": "tobi",
-	})
-	ctxx.Info("upload")
-	ctxx.Info("upload complete")
-	ctxx.Warn("upload retry")
-	ctxx.Errorf("failed to upload %s", "img.png")
+	//ctxx := apexLog.WithFields(apexLog.Fields{
+	//	"file": "something.png",
+	//	"type": "image/png",
+	//	"user": "tobi",
+	//})
+	//ctxx.Info("upload")
+	//ctxx.Info("upload complete")
+	//ctxx.Warn("upload retry")
+	//ctxx.Errorf("failed to upload %s", "img.png")
 
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)

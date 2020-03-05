@@ -11,7 +11,7 @@ type BucketCacheItem struct {
 
 type BucketCache struct {
 	items map[string]BucketCacheItem
-	lock  sync.RWMutex
+	lock  *sync.RWMutex
 }
 
 func (this *BucketCache) Get(key string) (*storage.BucketWebsite, bool) {
@@ -36,9 +36,16 @@ func (this *BucketCache) Put(key string, item *storage.BucketWebsite) {
 	this.lock.Unlock()
 }
 
-func NewBucketCache() BucketCache {
+func NewBucketCacheWithParams(items map[string]BucketCacheItem, lock *sync.RWMutex) BucketCache {
 	return BucketCache{
-		items: make(map[string]BucketCacheItem),
-		lock:  sync.RWMutex{},
+		items: items,
+		lock:  lock,
 	}
+}
+
+func NewBucketCache() BucketCache {
+	return NewBucketCacheWithParams(
+		make(map[string]BucketCacheItem),
+		&sync.RWMutex{},
+	)
 }

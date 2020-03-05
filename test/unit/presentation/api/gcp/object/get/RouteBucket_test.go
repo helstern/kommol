@@ -1,16 +1,17 @@
-package routes
+package get
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/helstern/kommol/internal/presentation/api/gcp/object/routes"
+	"github.com/helstern/kommol/internal/presentation/api/gcp/object/get"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestBucketSuccess(t *testing.T) {
 
+	route := &get.RouteBucket{}
 	router := mux.NewRouter()
-	routes.Bucket().Provide(router, objectTestHandler)
+	route.Provide(router, createGetObjectOperation())
 
 	actualUrl := "http://www.example.com/bucket/object"
 	expectedPath := "gs://bucket/object"

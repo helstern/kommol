@@ -16,7 +16,7 @@ type ObjectProvider struct {
 	buckets BucketCache
 }
 
-func (this *ObjectProvider) fetchBucketWebsite(ctx context.Context, bucket string) (*storage.BucketWebsite, error) {
+func (this ObjectProvider) fetchBucketWebsite(ctx context.Context, bucket string) (*storage.BucketWebsite, error) {
 	websiteCfg, _ := this.buckets.Get(bucket)
 	if websiteCfg == nil {
 		cfgCtx, _ := context.WithTimeout(ctx, 3*time.Second)
@@ -39,7 +39,7 @@ func (this *ObjectProvider) fetchBucketWebsite(ctx context.Context, bucket strin
 	return websiteCfg, nil
 }
 
-func (this *ObjectProvider) WebsiteContainer(ctx context.Context, objectPath []string) (object.WebsiteContainer, error) {
+func (this ObjectProvider) WebsiteContainer(ctx context.Context, objectPath []string) (object.WebsiteContainer, error) {
 	obj, err := ParsePath(objectPath)
 	if err != nil {
 		return EmptyWebsiteContainer(), err
@@ -53,7 +53,7 @@ func (this *ObjectProvider) WebsiteContainer(ctx context.Context, objectPath []s
 	return NewWebsiteContainer(obj.Bucket, websiteCfg.MainPageSuffix)
 }
 
-func (this *ObjectProvider) Headers(ctx context.Context, objectPath []string) ([]http.Header, error) {
+func (this ObjectProvider) Headers(ctx context.Context, objectPath []string) ([]http.Header, error) {
 	obj, err := ParsePath(objectPath)
 	if err != nil {
 		return []http.Header{}, err
@@ -87,7 +87,7 @@ func (this *ObjectProvider) Headers(ctx context.Context, objectPath []string) ([
 	return headers, nil
 }
 
-func (this *ObjectProvider) Data(ctx context.Context, objectPath []string) (io.Reader, error) {
+func (this ObjectProvider) Data(ctx context.Context, objectPath []string) (io.Reader, error) {
 	obj, err := ParsePath(objectPath)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (this *ObjectProvider) Data(ctx context.Context, objectPath []string) (io.R
 	return reader, nil
 }
 
-func NewObjectProvider(client *storage.Client) ObjectProvider {
+func NewObjectProvider(client *storage.Client) app.ObjectProvider {
 	return ObjectProvider{
 		client:  client,
 		buckets: NewBucketCache(),
