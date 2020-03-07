@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+### Added
+ - read the bucket's website configuration and serve the index file from a GCP bucket when the root file (`/`) is requested 
+ - new cli option `log-level` which controls the level of logging. defaults to info
+ - improve logging
 ## [v0.1.5] - 2019-10-17
 ### Changed
  - fix e2e tests
