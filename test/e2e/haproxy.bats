@@ -16,7 +16,6 @@ function setup() {
 }
 
 function teardown() {
-
     docker stop kommol-haproxy
     pkill -f ${PROJECT_DIR}/target/kommol/kommol > /dev/null
 }
@@ -25,8 +24,8 @@ function teardown() {
     local local_file=${BATS_TMPDIR}/radu.helstern.pdf
 
     STATUS=$(curl -s -w '%{http_code}' \
-        --resolve radu.helstern.org:8180:127.0.0.1 --output ${local_file} \
-        -H 'X-KOMMOL-STRATEGY: GCP_WEBSITE' http://radu.helstern.org:8180/cv/radu.helstern.pdf
+        --resolve radu.helstern.org:80:127.0.0.1 --output ${local_file} \
+        -H 'X-KOMMOL-STRATEGY: GCP_WEBSITE' http://radu.helstern.org:80/cv/radu.helstern.pdf
     )
     [ "${STATUS}" = "200" ]
     rm ${local_file}
@@ -36,8 +35,8 @@ function teardown() {
     local local_file="${BATS_TMPDIR}/index-kommol-test"
 
     STATUS=$(curl -s -w '%{http_code}' \
-        --resolve radu.helstern.org:8180:127.0.0.1 --output ${local_file} \
-        -H 'X-KOMMOL-STRATEGY: GCP_WEBSITE' http://radu.helstern.org:8180/
+        --resolve radu.helstern.org:80:127.0.0.1 --output ${local_file} \
+        -H 'X-KOMMOL-STRATEGY: GCP_WEBSITE' http://radu.helstern.org:80/
     )
     [ "${STATUS}" = "200" ]
     rm ${local_file}

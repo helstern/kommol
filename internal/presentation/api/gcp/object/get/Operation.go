@@ -1,9 +1,10 @@
 package get
 
 import (
-	"github.com/apex/log"
+	logging "github.com/helstern/kommol/internal/core/logging/app"
 	"github.com/helstern/kommol/internal/core/object"
 	"github.com/helstern/kommol/internal/core/object/app"
+	"github.com/helstern/kommol/internal/presentation/api"
 	"io"
 	"net/http"
 	"strings"
@@ -11,20 +12,19 @@ import (
 
 type Operation func(w http.ResponseWriter, req *http.Request, obj object.Object)
 
-func NewOperation(s app.ObjectProxy) Operation {
+func NewOperation(s app.ObjectProxy, l logging.LoggerFactory) Operation {
 	operation := func(w http.ResponseWriter, req *http.Request, obj object.Object) {
-		path := strings.Join(obj.Path, "/")
-
-		logCtx := log.WithFields(log.Fields{
-			"path": path,
+		ctx := logging.WithLogContext(req.Context(), logging.Fields{
+			"requestId": api.RequestId(req),
 		})
-		logCtx.Info("retrieving path")
-
-		ctx := req.Context()
+		logger := logging.ContextLogger(ctx, l).WithFields(logging.Fields{
+			"path": strings.Join(obj.Path, "/"),
+		})
+		logger.Info("retrieving path")
 		httpResponse, err := s.Http(ctx, obj)
 
 		if err != nil {
-			logCtx.Info(err.Error())
+			logger.WithError(err).Info("failed to retrieve path")
 			http.Error(w, "failed to retrieve", http.StatusInternalServerError)
 			return
 		}
@@ -35,10 +35,10 @@ func NewOperation(s app.ObjectProxy) Operation {
 
 		size, err := io.Copy(w, httpResponse.Body)
 		if err != nil {
-			logCtx.Info(err.Error())
+			logger.WithError(err).Info("failed to write object")
 			http.Error(w, "failed to retrieve", http.StatusInternalServerError)
 		}
-		logCtx.Infof("wrote %d bytes", size)
+		logger.WithFields(logging.Fields{"bytes": size}).Info("wrote object")
 	}
 
 	return operation

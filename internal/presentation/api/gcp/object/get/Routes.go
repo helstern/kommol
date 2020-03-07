@@ -2,6 +2,7 @@ package get
 
 import (
 	"github.com/gorilla/mux"
+	logging "github.com/helstern/kommol/internal/core/logging/app"
 	"github.com/helstern/kommol/internal/core/object/app"
 )
 
@@ -10,9 +11,9 @@ var (
 	routeBucket  *RouteBucket
 )
 
-func Routes(r *mux.Router, s app.ObjectProxy) {
+func Routes(r *mux.Router, s app.ObjectProxy, l logging.LoggerFactory) {
 
-	h := NewOperation(s)
+	h := NewOperation(s, l)
 
 	if routeWebsite == nil {
 		routeWebsite = &RouteWebsite{}

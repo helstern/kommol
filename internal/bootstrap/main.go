@@ -6,6 +6,7 @@ import (
 	"github.com/helstern/kommol/internal/bootstrap/core"
 	"github.com/helstern/kommol/internal/bootstrap/gcp"
 	"github.com/helstern/kommol/internal/bootstrap/http"
+	"github.com/helstern/kommol/internal/bootstrap/logging"
 	"github.com/sarulabs/di/v2"
 )
 
@@ -28,6 +29,11 @@ func Setup(ctx context.Context, builder *di.Builder) error {
 	}
 
 	err = gcp.Module(ctx, builder)
+	if err != nil {
+		return err
+	}
+
+	err = logging.Module(ctx, builder)
 	if err != nil {
 		return err
 	}

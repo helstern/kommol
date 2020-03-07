@@ -2,16 +2,18 @@ package config
 
 import (
 	"flag"
+	"github.com/apex/log"
 )
 
 type Config struct {
 	BindAddress string
 	GCP         GcpConfig
+	LogLevel    log.Level
 }
 
 var (
-	bind    = flag.String("bind", "127.0.0.1:8080", "Bind address")
-	verbose = flag.Bool("verbose", false, "Show access log")
+	bind     = flag.String("bind", "127.0.0.1:8080", "Bind address")
+	logLevel = flag.String("log-level", "info", "The logging level, defaults to info")
 )
 
 // gcp config
@@ -25,8 +27,11 @@ func NewCliConfig() Config {
 		flag.Parse()
 	}
 
+	logLevel, _ := log.ParseLevel(*logLevel)
+
 	return Config{
 		BindAddress: *bind,
 		GCP:         NewGcpCliConfig(*gcpCredentials),
+		LogLevel:    logLevel,
 	}
 }
