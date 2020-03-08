@@ -1,4 +1,4 @@
-package gcp
+package logging
 
 import (
 	"context"
@@ -8,12 +8,7 @@ import (
 func Module(ctx context.Context, builder *di.Builder) error {
 	var err error
 
-	err = GetObjectProvider().Module(ctx, builder)
-	if err != nil {
-		return err
-	}
-
-	err = GetStorageClient().Module(ctx, builder)
+	err = GetLoggerFactory().Module(ctx, builder)
 	if err != nil {
 		return err
 	}

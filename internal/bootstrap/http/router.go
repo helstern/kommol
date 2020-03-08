@@ -3,9 +3,10 @@ package http
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"github.com/helstern/kommol/internal/bootstrap/gcp/api"
+	"github.com/helstern/kommol/internal/bootstrap/core"
+	"github.com/helstern/kommol/internal/bootstrap/logging"
 	"github.com/helstern/kommol/internal/infrastructure/di/builder"
-	"github.com/helstern/kommol/internal/presentation/api/gcp/object/routes"
+	"github.com/helstern/kommol/internal/presentation/api/gcp/object/get"
 	"github.com/sarulabs/di/v2"
 )
 
@@ -22,7 +23,7 @@ func (o *router) Module(ctx context.Context, builder *di.Builder) error {
 		Name: o.key,
 		Build: func(ctn di.Container) (interface{}, error) {
 			router := mux.NewRouter()
-			routes.Get(router, api.Object().Get(ctn))
+			get.Routes(router, core.GetObjectProxy().Get(ctn), logging.GetLoggerFactory().Get(ctn))
 			return router, nil
 		},
 	})
