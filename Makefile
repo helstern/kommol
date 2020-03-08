@@ -71,12 +71,13 @@ changelog:
 		/bin/sh -c "kacl init"
 
 release:
+	@ if test -z "${ARGS}"; then echo "missing release type"; exit 1; fi;
 	${QUIET} docker run --user 1000  \
 		--volume ~/.gitconfig:/home/versioneer/.gitconfig \
 		--volume ${mkfile_dir}:/home/versioneer/${mkfile_dir} \
 		--workdir /home/versioneer/${mkfile_dir} \
 		-it ${VERSION_TOOLS_IMAGE}:${VERSION_TOOLS_VERSION} \
 		/bin/sh -c "release-simple.sh ${ARGS}"
-	git push origin && git push --tags origin
+	${QUIET} git push origin && git push --tags origin
 
 .PHONY: ${TEST_TARGETS} check test tests deps ${RELEASE_TARGETS} release
