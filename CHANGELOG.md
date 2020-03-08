@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [v0.2.0] - 2020-03-08
 ### Added
- - read the bucket's website configuration and serve the index file from a GCP bucket when the root file (`/`) is requested 
+- read the bucket's website configuration and serve the index file from a GCP bucket when the root file (`/`) is requested 
  - new cli option `log-level` which controls the level of logging. defaults to info
  - improve logging
+
+
 ## [v0.1.5] - 2019-10-17
 ### Changed
  - fix e2e tests
@@ -38,7 +41,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - very basic Google Cloud Storage reverse proxy with limited logging
 
-[Unreleased]: https://github.com/helstern/kommol/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/helstern/kommol/compare/v0.2.0...HEAD
+[v0.2.0]: https://github.com/helstern/kommol/compare/v0.1.5...v0.2.0
 [v0.1.5]: https://github.com/helstern/kommol/compare/v0.1.4...v0.1.5
 [v0.1.4]: https://github.com/helstern/kommol/compare/v0.1.3...v0.1.4
 [v0.1.3]: https://github.com/helstern/kommol/compare/v0.1.2...v0.1.3
