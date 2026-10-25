@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v0.3.0] - 2026-10-25
+### Added
+- a missing object is answered with 404: the bucket's own not-found page when it names one, else the page given by
+  the new `-not-found-page` flag, else a plain 404; other read errors stay 500
+
 ## [v0.2.0] - 2020-03-08
 ### Added
 - read the bucket's website configuration and serve the index file from a GCP bucket when the root file (`/`) is requested 

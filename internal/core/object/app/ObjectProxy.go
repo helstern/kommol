@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"github.com/helstern/kommol/internal/core"
 	"github.com/helstern/kommol/internal/core/object"
 	"reflect"
@@ -31,12 +32,30 @@ func (this *ObjectProxy) Http(ctx context.Context, o object.Object) (*HttpObject
 		actualObject = resolvedObject
 	}
 
-	headers, err := resolver.Headers(ctx, actualObject.Path)
+	found, err := fetch(ctx, resolver, actualObject)
+	if !errors.Is(err, object.ErrNotFound) {
+		return found, err
+	}
+
+	page, ok := container.NotFoundObject()
+	if !ok {
+		return nil, err
+	}
+	notFound, pageErr := fetch(ctx, resolver, page)
+	if pageErr != nil {
+		return nil, err
+	}
+	notFound.Status = 404
+	return notFound, nil
+}
+
+func fetch(ctx context.Context, resolver ObjectProvider, o object.Object) (*HttpObject, error) {
+	headers, err := resolver.Headers(ctx, o.Path)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := resolver.Data(ctx, actualObject.Path)
+	data, err := resolver.Data(ctx, o.Path)
 	if err != nil {
 		return nil, err
 	}

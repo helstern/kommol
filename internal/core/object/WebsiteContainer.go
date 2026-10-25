@@ -7,9 +7,19 @@ import (
 )
 
 type WebsiteContainer struct {
-	Provider  core.CloudProviders
-	path      []string
-	indexFile string
+	Provider     core.CloudProviders
+	path         []string
+	indexFile    string
+	notFoundPage string
+}
+
+// NotFoundObject is the page served, with status 404, for an object that does not exist; false when there is none.
+func (this *WebsiteContainer) NotFoundObject() (Object, bool) {
+	if this.notFoundPage == "" {
+		return Object{}, false
+	}
+	objectPath := append(append([]string{}, this.path...), this.notFoundPage)
+	return Object{Provider: this.Provider, Path: objectPath}, true
 }
 
 func (this *WebsiteContainer) ResolveObject(path []string) (Object, error) {
@@ -41,6 +51,10 @@ func (this *WebsiteContainer) ResolveObject(path []string) (Object, error) {
 }
 
 func NewWebsiteContainer(provider core.CloudProviders, path []string, indexFile string) (WebsiteContainer, error) {
+	return NewWebsiteContainerWithNotFound(provider, path, indexFile, "")
+}
+
+func NewWebsiteContainerWithNotFound(provider core.CloudProviders, path []string, indexFile string, notFoundPage string) (WebsiteContainer, error) {
 	if len(path) == 0 {
 		return WebsiteContainer{
 			Provider:  provider,
@@ -50,8 +64,9 @@ func NewWebsiteContainer(provider core.CloudProviders, path []string, indexFile 
 	}
 
 	return WebsiteContainer{
-		Provider:  provider,
-		path:      path,
-		indexFile: indexFile,
+		Provider:     provider,
+		path:         path,
+		indexFile:    indexFile,
+		notFoundPage: notFoundPage,
 	}, nil
 }

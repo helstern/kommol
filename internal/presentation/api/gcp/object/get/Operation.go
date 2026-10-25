@@ -1,6 +1,8 @@
 package get
 
 import (
+	"errors"
+
 	logging "github.com/helstern/kommol/internal/core/logging/app"
 	"github.com/helstern/kommol/internal/core/object"
 	"github.com/helstern/kommol/internal/core/object/app"
@@ -12,7 +14,7 @@ import (
 
 type Operation func(w http.ResponseWriter, req *http.Request, obj object.Object)
 
-func NewOperation(s app.ObjectProxy, l logging.LoggerFactory) Operation {
+func NewOperation(objectProxy app.ObjectProxy, l logging.LoggerFactory) Operation {
 	operation := func(w http.ResponseWriter, req *http.Request, obj object.Object) {
 		ctx := logging.WithLogContext(req.Context(), logging.Fields{
 			"requestId": api.RequestId(req),
@@ -21,8 +23,13 @@ func NewOperation(s app.ObjectProxy, l logging.LoggerFactory) Operation {
 			"path": strings.Join(obj.Path, "/"),
 		})
 		logger.Info("retrieving path")
-		httpResponse, err := s.Http(ctx, obj)
+		httpResponse, err := objectProxy.Http(ctx, obj)
 
+		if errors.Is(err, object.ErrNotFound) {
+			logger.WithError(err).Info("path not found")
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
 		if err != nil {
 			logger.WithError(err).Info("failed to retrieve path")
 			http.Error(w, "failed to retrieve", http.StatusInternalServerError)
@@ -31,6 +38,9 @@ func NewOperation(s app.ObjectProxy, l logging.LoggerFactory) Operation {
 
 		for _, v := range httpResponse.Headers {
 			w.Header().Add(v.Name, v.Value)
+		}
+		if httpResponse.Status != 0 {
+			w.WriteHeader(httpResponse.Status)
 		}
 
 		size, err := io.Copy(w, httpResponse.Body)

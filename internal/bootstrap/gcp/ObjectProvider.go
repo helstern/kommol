@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"github.com/helstern/kommol/internal/bootstrap/config"
 	"github.com/helstern/kommol/internal/bootstrap/logging"
 	"github.com/helstern/kommol/internal/core/object/app"
 	"github.com/helstern/kommol/internal/infrastructure/di/builder"
@@ -23,7 +24,7 @@ func (o *ObjectProvider) Module(ctx context.Context, builder *di.Builder) error 
 		Build: func(ctn di.Container) (interface{}, error) {
 			client := GetStorageClient().Get(ctn)
 			logger := logging.GetLoggerFactory().Get(ctn)
-			return gcp.NewObjectProvider(client, logger), nil
+			return gcp.NewObjectProvider(client, logger, config.Get(ctn).NotFoundPage), nil
 		},
 	})
 }

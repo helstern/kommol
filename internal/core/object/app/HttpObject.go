@@ -8,4 +8,6 @@ import (
 type HttpObject struct {
 	Headers []http.Header
 	Body    io.Reader
+	// Status is the HTTP status to answer with; 0 means 200.
+	Status int
 }

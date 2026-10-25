@@ -3,6 +3,8 @@ package gcp
 import (
 	"cloud.google.com/go/storage"
 	"context"
+	"errors"
+	"fmt"
 	"github.com/helstern/kommol/internal/core"
 	"github.com/helstern/kommol/internal/core/http"
 	logging "github.com/helstern/kommol/internal/core/logging/app"
@@ -14,9 +16,26 @@ import (
 
 type ObjectProvider struct {
 	app.ObjectProvider
-	client  *storage.Client
-	buckets BucketCache
-	logging logging.LoggerFactory
+	client       *storage.Client
+	buckets      BucketCache
+	logging      logging.LoggerFactory
+	notFoundPage string
+}
+
+// NotFoundPage is the bucket's own not-found page, else the default; "" means none.
+func NotFoundPage(website *storage.BucketWebsite, defaultPage string) string {
+	if website != nil && website.NotFoundPage != "" {
+		return website.NotFoundPage
+	}
+	return defaultPage
+}
+
+// notFound keeps GCS's "object doesn't exist" recognisable as object.ErrNotFound.
+func notFound(err error) error {
+	if errors.Is(err, storage.ErrObjectNotExist) {
+		return fmt.Errorf("%w: %v", object.ErrNotFound, err)
+	}
+	return err
 }
 
 func (this ObjectProvider) fetchBucketWebsite(ctx context.Context, bucket string) (*storage.BucketWebsite, error) {
@@ -70,7 +89,7 @@ func (this ObjectProvider) WebsiteContainer(ctx context.Context, objectPath []st
 		return EmptyWebsiteContainer(), err
 	}
 
-	return NewWebsiteContainer(obj.Bucket, websiteCfg.MainPageSuffix)
+	return NewWebsiteContainerWithNotFound(obj.Bucket, websiteCfg.MainPageSuffix, NotFoundPage(websiteCfg, this.notFoundPage))
 }
 
 func (this ObjectProvider) Headers(ctx context.Context, objectPath []string) ([]http.Header, error) {
@@ -90,7 +109,7 @@ func (this ObjectProvider) Headers(ctx context.Context, objectPath []string) ([]
 	logger.Debug("reading object attributes")
 	attrs, err := this.client.Bucket(obj.Bucket).Object(obj.Key).Attrs(nextCtx)
 	if err != nil {
-		return []http.Header{}, err
+		return []http.Header{}, notFound(err)
 	}
 
 	var headers []http.Header
@@ -129,15 +148,17 @@ func (this ObjectProvider) Data(ctx context.Context, objectPath []string) (io.Re
 	}).Debug("reading object data")
 	reader, err := this.client.Bucket(obj.Bucket).Object(obj.Key).NewReader(ctx)
 	if err != nil {
-		return nil, err
+		return nil, notFound(err)
 	}
 	return reader, nil
 }
 
-func NewObjectProvider(client *storage.Client, logging logging.LoggerFactory) app.ObjectProvider {
+// notFoundPage is the default not-found page for buckets that set none ("" for none).
+func NewObjectProvider(client *storage.Client, logging logging.LoggerFactory, notFoundPage string) app.ObjectProvider {
 	return ObjectProvider{
-		client:  client,
-		buckets: NewBucketCache(),
-		logging: logging,
+		client:       client,
+		buckets:      NewBucketCache(),
+		logging:      logging,
+		notFoundPage: notFoundPage,
 	}
 }
