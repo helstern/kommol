@@ -44,7 +44,7 @@ build: GOOS ?= linux
 build: GOARCH ?= amd64
 build: VERSION ?= latest
 build: ${mkfile_dir}/internal ${mkfile_dir}/cmd
-	${QUIET} cd ${mkfile_dir}/cmd/kommol && GOOS=${GOOS} GOARCH=${GOARCH}  ${GO} build -o ${out_dir}/kommol/kommol ${ARGS}
+	${QUIET} cd ${mkfile_dir}/cmd/kommol && CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} ${GO} build -o ${out_dir}/kommol/kommol ${ARGS}
 	${QUIET} cd ${out_dir} && tar -cz -f ${out_dir}/kommol-${VERSION}-${GOOS}-${GOARCH}.tar.gz -C ${out_dir}/kommol .
 
 deps:
