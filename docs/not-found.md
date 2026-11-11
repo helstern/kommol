@@ -17,6 +17,6 @@ Decided by the user, 2026-10-25.
 - [x] haproxy on the gateway (control.helstern.org, weblb role's `haproxy.cfg` template) serves the error page when
   kommol answers a plain 404. Deployed 2026-11-11 (image `gateway-control-helstern-org-20261111`); tested by
   control.helstern.org `srv/weblb/test/haproxy.bats`.
-- [ ] Gateway on the empty 404 (user decision 2026-11-11): release kommol (user: `make release-patch` pushes), pin it
-  in control.helstern.org `gateway.play.yml`, haproxy rule on `res.hdr(content-length) -m str 0`, fake kommol in
-  `srv/weblb/test/haproxy/kommol.py`, image build, VM replace (needs a yes).
+- [ ] Gateway on the empty 404 (user decision 2026-11-11). Done: v0.4.0 tagged locally; control.helstern.org
+  `e39b754` (pin 0.4.0, rule on `res.hdr(content-length) -m str 0`, bats 3/3). Open: publish the v0.4.0 release
+  (user), gateway image build, VM replace (needs a yes), check prod.
