@@ -13,5 +13,6 @@ Decided by the user, 2026-10-25.
 
 ## Todo
 
-- [ ] haproxy on the gateway (control.helstern.org, weblb role's `haproxy.cfg` template) serves the error page when
-  kommol answers a plain 404.
+- [x] haproxy on the gateway (control.helstern.org, weblb role's `haproxy.cfg` template) serves the error page when
+  kommol answers a plain 404. Deployed 2026-11-11 (image `gateway-control-helstern-org-20261111`); tested by
+  control.helstern.org `srv/weblb/test/haproxy.bats`.
