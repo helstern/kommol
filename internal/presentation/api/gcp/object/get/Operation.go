@@ -27,7 +27,9 @@ func NewOperation(objectProxy app.ObjectProxy, l logging.LoggerFactory) Operatio
 
 		if errors.Is(err, object.ErrNotFound) {
 			logger.WithError(err).Info("path not found")
-			http.Error(w, "not found", http.StatusNotFound)
+			// No page: an empty 404, so the proxy in front serves its own page.
+			w.Header().Set("Content-Length", "0")
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 		if err != nil {

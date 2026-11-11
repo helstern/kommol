@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- a missing object with no not-found page is answered with an empty 404 (`Content-Length: 0`), so the proxy in
+  front serves its own page
 
 ## [v0.3.0] - 2026-10-25
 ### Added

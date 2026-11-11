@@ -61,10 +61,11 @@ func TestMissingObjectWithPageAnswers404WithThePage(t *testing.T) {
 	}
 }
 
-func TestMissingObjectWithoutPageAnswersPlain404(t *testing.T) {
+// The proxy in front serves its own page for a 404 with no body.
+func TestMissingObjectWithoutPageAnswersEmpty404(t *testing.T) {
 	w := serve(provider{objects: map[string]string{}}, "nope")
-	if w.Code != 404 {
-		t.Fatalf("got %d, want 404", w.Code)
+	if w.Code != 404 || w.Body.Len() != 0 || w.Header().Get("Content-Length") != "0" {
+		t.Fatalf("got %d %q Content-Length %q, want 404, empty, 0", w.Code, w.Body.String(), w.Header().Get("Content-Length"))
 	}
 }
 
