@@ -17,7 +17,10 @@ import (
 	"github.com/helstern/kommol/internal/presentation/api/gcp/object/get"
 )
 
-type provider struct{ objects map[string]string; notFound string }
+type provider struct {
+	objects  map[string]string
+	notFound string
+}
 
 func (p provider) WebsiteContainer(ctx context.Context, path []string) (object.WebsiteContainer, error) {
 	return object.NewWebsiteContainerWithNotFound(core.GCP, path[0:1], "index.html", p.notFound)
@@ -52,7 +55,6 @@ func serve(p provider, key string) *httptest.ResponseRecorder {
 	op(w, httptest.NewRequest("GET", "/"+key, nil), object.Object{Provider: core.GCP, Path: []string{"bucket", key}})
 	return w
 }
-
 
 func TestMissingObjectWithPageAnswers404WithThePage(t *testing.T) {
 	w := serve(provider{objects: map[string]string{"404.html": "gone"}, notFound: "404.html"}, "nope")

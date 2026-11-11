@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v0.4.1] - 2026-11-11
+### Fixed
+- the bucket and object reads cancel their timeout contexts (a context leak found by `go vet`)
+
 ## [v0.4.0] - 2026-11-11
 ### Changed
 - a missing object with no not-found page is answered with an empty 404 (`Content-Length: 0`), so the proxy in

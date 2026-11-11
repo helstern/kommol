@@ -83,7 +83,8 @@ func (this ObjectProvider) WebsiteContainer(ctx context.Context, objectPath []st
 		"bucket":       obj.Bucket,
 	}).Debug("reading bucket configuration")
 
-	fetchCtx, _ := context.WithTimeout(ctx, 3*time.Second)
+	fetchCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
 	websiteCfg, err := this.fetchBucketWebsite(fetchCtx, obj.Bucket)
 	if err != nil {
 		return EmptyWebsiteContainer(), err
@@ -104,7 +105,8 @@ func (this ObjectProvider) Headers(ctx context.Context, objectPath []string) ([]
 		"bucket":   obj.Bucket,
 		"key":      obj.Key,
 	})
-	nextCtx, _ := context.WithTimeout(ctx, 3*time.Second)
+	nextCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
 
 	logger.Debug("reading object attributes")
 	attrs, err := this.client.Bucket(obj.Bucket).Object(obj.Key).Attrs(nextCtx)
