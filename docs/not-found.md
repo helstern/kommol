@@ -8,7 +8,7 @@ Decided by the user, 2026-10-25.
 - For a missing object kommol serves, with status 404:
   1. the bucket's own not-found page (its website setting `NotFoundPage`; read once per bucket and cached), else
   2. the page given on the command line, `-not-found-page <path in the bucket>`.
-- With neither, kommol answers an empty 404 (`Content-Length: 0`; unreleased, after v0.3.0) and the proxy in front
+- With neither, kommol answers an empty 404 (`Content-Length: 0`; v0.4.0) and the proxy in front
   serves the error page.
 - Any other read error stays 500.
 
